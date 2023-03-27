@@ -63,7 +63,7 @@
     </header>
     <br /><br />
     <main>
-        <div class="container">
+        <!-- <div class="container">
             <div class="card">
                 <div class="card-header">
                   View Progress
@@ -95,7 +95,22 @@
                 </div>
               </div>
               
+        </div> -->
+
+
+        <div class="container">
+          <div class="card">
+            <div class="card-header">
+              View Progress
+            </div>
+            <div class="card-body">
+              <div class="list-group" id="task-list">
+                <!-- task list will be populated dynamically -->
+              </div>
+            </div>
+          </div>
         </div>
+        
        
           
 
@@ -103,7 +118,60 @@
 
 
 
+    <script>
+      document.addEventListener('DOMContentLoaded', async () => {
+        const accessToken = localStorage.getItem('access_token');
+        const headers = {
+          'Authorization': `Bearer ${accessToken}`
+        };
+        const managerName = localStorage.getItem('username');
+        const [manResponse] = await Promise.all([
+          fetch(`http://127.0.0.1:8000/get_manager_id?manager_name=${managerName}`, {headers})
+        ]);
 
+
+
+        const managerDetails = await manResponse.json();
+        const managerId = managerDetails["man_id"]
+
+        const [empResponse] = await Promise.all([
+          fetch(`http://127.0.0.1:8000/get_employees?manager_id=${managerId}`, {headers}),
+        ]); 
+
+        const employeeDetails = await empResponse.json();
+
+        const response = await fetch(`http://127.0.0.1:8000/get_manager_tickets?manager_id=${managerId}`, { headers });
+        const data = await response.json();
+        const taskList = document.querySelector('#task-list');
+        data.forEach(task => {
+          const item = document.createElement('a');
+          item.setAttribute('href', '#');
+          item.classList.add('list-group-item', 'list-group-item-action');
+          item.setAttribute('data-task-id', task.ticket_id);
+
+          const title = document.createElement('h5');
+          title.classList.add('mb-1');
+          title.textContent = task.title;
+          const status = document.createElement('small');
+          status.textContent = task.status;
+          const employee = document.createElement('p');
+          employee.classList.add('mb-1');
+          employee.textContent = employeeDetails[task.employee];
+          const timestamp = document.createElement('small');
+          timestamp.textContent = task.timestamp;
+          item.appendChild(title);
+          item.appendChild(status);
+          item.appendChild(employee);
+          item.appendChild(timestamp);
+          taskList.appendChild(item);
+
+          item.addEventListener('click', () => {
+          const taskId = item.getAttribute('data-task-id');
+          window.location.href = `update_ticket.html?taskId=${taskId}`; // move to task page with corresponding task ID
+      });
+        });
+      });
+    </script>
 
 
 

@@ -64,7 +64,7 @@
             <div class="card" style="background-color: #f7faff; color:black; ">
               <div class="card-body">
                 <h5 class="card-title mb-4"> Welcome to Project Management Portal </h5>
-                <form>
+                <form id="login-form">
                     <div class="form-row mb-3">
                       <div class="col-md-3">
                         <label for="username">Username</label>
@@ -101,7 +101,46 @@
 
 
 
+    <script>
+   // Get the login form element
+const loginForm = document.querySelector('#login-form');
 
+// Add an event listener to the form's submit button
+loginForm.addEventListener('submit', (event) => {
+  event.preventDefault(); // Prevent the form from submitting normally
+  
+  // Get the input values
+  const username = document.querySelector("#username").value;
+  const password = document.querySelector("#password").value;
+  const data = new FormData();
+  data.append("username", username);
+  data.append("password", password);
+  fetch("http://127.0.0.1:8000/token", {
+    method: "POST",
+    body: data
+  })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error("API request failed");
+    }
+    return response.json();
+  })
+  .then(data => {
+    console.log(data);
+    localStorage.setItem('access_token', data["access_token"]);
+    localStorage.setItem('username', username);
+    localStorage.setItem('role', role);
+    window.location.href = 'index.html';
+    // handle successful login response here
+  })
+  .catch(error => {
+    console.error(error);
+    // handle login error here
+  });
+})
+
+    </script>
+    
 
 
 

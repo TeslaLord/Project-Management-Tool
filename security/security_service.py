@@ -107,7 +107,7 @@ async def login_for_access_token(request: Request, form_data: OAuth2PasswordRequ
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail="Incorrect Credentials", headers = {"WWW-Authenticate": "Bearer"})
     access_token_expires = timedelta(minutes = ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(data={"sub": user["name"]}, expires_delta=access_token_expires)
-    return {"access_token": access_token, "token_type":"bearer"}
+    return {"access_token": access_token, "token_type":"bearer", "role":user["role"]}
 
 ##
 @app.get("/users/me/")
@@ -146,7 +146,7 @@ async def get_employees(  manager_id, current_user = Depends(get_current_active_
     return make_get_request(url, params)
 
 @app.get("/get_manager_tickets")
-async def get_manager_tickets(  manager_id, current_user = Depends(get_current_active_user)):
+async def get_manager_tickets( manager_id, current_user = Depends(get_current_active_user)):
     url = f'{BACKEND_URL}/get_manager_tickets'
     params = {
         'manager_id': manager_id
@@ -154,7 +154,7 @@ async def get_manager_tickets(  manager_id, current_user = Depends(get_current_a
     return make_get_request(url, params)
 
 @app.get("/get_ticket_detail")
-async def get_ticket_detail(  ticket_id, current_user = Depends(get_current_active_user)):
+async def get_ticket_detail( ticket_id, current_user = Depends(get_current_active_user)):
     url = f'{BACKEND_URL}/get_ticket_detail'
     params = {
         'ticket_id': ticket_id
@@ -162,7 +162,7 @@ async def get_ticket_detail(  ticket_id, current_user = Depends(get_current_acti
     return make_get_request(url, params)
 
 @app.get("/get_employee_tickets")
-async def get_employee_tickets(  employee_id, current_user = Depends(get_current_active_user)):
+async def get_employee_tickets(employee_id, current_user = Depends(get_current_active_user)):
     url = f'{BACKEND_URL}/get_employee_tickets'
     params = {
         'employee_id': employee_id
@@ -208,4 +208,18 @@ async def create_ticket(employee_id, manager_id, title, description, current_use
     return make_get_request(url, params)
 
 
+@app.get("/get_manager_id")
+async def get_manager_id(manager_name, current_user = Depends(get_current_active_user)):
+    url = f'{BACKEND_URL}/get_manager_id'
+    params = {
+        'manager_name': manager_name,
+    }
+    return make_get_request(url, params)
 
+@app.get("/get_employee_id")
+async def get_employee_id( employee_name, current_user = Depends(get_current_active_user)):
+    url = f'{BACKEND_URL}/get_employee_id'
+    params = {
+        'employee_name': employee_name
+    }
+    return make_get_request(url, params)

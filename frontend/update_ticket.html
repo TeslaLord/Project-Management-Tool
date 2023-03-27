@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Project Management Tool</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+      integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="main.css" />
+
+  </head>
+
+  <body>
+    <header>
+     
+      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+          <a class="navbar-brand" href="index.html">Project Portal</a>
+            
+          <div
+            class="collapse navbar-collapse justify-content-end"  id="navbarTogglerDemo01"
+            id="navbarSupportedContent"
+          >
+            <ul class="navbar-nav mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a
+                  class="nav-link"
+                  aria-current="page"
+                  href="index.html"
+                  >Home</a
+                >
+              </li>
+             
+
+              <li class="nav-item">
+                <a class="nav-link" href="#">Logout</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Register</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Login</a>
+              </li>
+            </ul>
+          </div>
+       
+      </nav>
+    </header>
+    <br /><br />
+    <main>
+
+
+        <div class="container">
+            <h1 class="custom-title">Ticket Title</h1>
+            <div class="card text-dark">
+                <div class="card-body">
+                    <h5 class="card-title">Ticket Description Lorem ipsum dolor sit amet consectetur adipisicing elit. Quo quam possimus nam numquam! Adipisci fugit aliquid reiciendis voluptas, velit consectetur nostrum ducimus ab cum odio, eos suscipit dolorem fuga beatae!</h5>
+                    <br><br>
+                    <p class="card-text">Created on: <span class="font-weight-bold">01/01/2022.</p>
+                </div>
+                <hr>
+                <h6 class="card-subtitle mb-2 text-muted">Comments:</h6>
+                <br>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                           
+                           
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-5"></div>
+                        <div class="col-sm-2">
+                            <p class="card-text">Status: <h5 class="alert alert-warning text-center">To-do</h5></p>
+                            <div class="col-sm-5"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <form id="comment-form">
+                <div class="form-row mb-3">
+                    <div class="col-md-3">
+                        <label for="comment">Add Comment</label>
+                    </div>
+                    <div class="col-md-9">
+                        <textarea class="form-control" id="comment" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="form-row mb-3">
+                    <div class="col-md-3">
+                        <label for="status">Change Status</label>
+                    </div>
+                    <div class="col-md-9">
+                        <select class="form-control" id="status">
+                            <option>To-do</option>
+                            <option>Pending</option>
+                            <option>Completed</option>
+                        </select>
+                    </div>
+                </div>
+        
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+        
+          
+
+    </main>
+
+
+
+
+<script>
+
+document.addEventListener('DOMContentLoaded', async () => {
+
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const taskId = urlParams.get('taskId');
+  const accessToken = localStorage.getItem('access_token');
+  const headers = {
+    'Authorization': `Bearer ${accessToken}`
+  };
+  const response = await fetch(`http://127.0.0.1:8000/get_ticket_detail/?ticket_id=${taskId}`, { headers });
+  const data = await response.json();
+  const title = document.querySelector('.custom-title');
+  const description = document.querySelector('.card-title');
+  const timestamp = document.querySelector('.card-text');
+  const commentsContainer = document.querySelector('.container .col-md-12');
+  const status = document.querySelector('.alert');
+  
+  title.textContent = data.title;
+  description.textContent = data.description;
+  timestamp.textContent = data.timestamp;
+  status.textContent = data.status;
+  status.classList.add(`alert-${data.status.toLowerCase()}`);
+  
+  const comment_response = await fetch(`http://127.0.0.1:8000/get_ticket_comments/?ticket_id=${taskId}`, { headers });
+  const comments = await comment_response.json();
+  console.log(comments);
+  comments.forEach(comment => {
+    const card = document.createElement('div');
+    card.classList.add('card', 'mb-3');
+    const cardBody = document.createElement('div');
+    cardBody.classList.add('card-body');
+    const row = document.createElement('div');
+    row.classList.add('row');
+    const col1 = document.createElement('div');
+    col1.classList.add('col-md-6');
+    const col2 = document.createElement('div');
+    col2.classList.add('col-md-6');
+    const author = document.createElement('p');
+    author.classList.add('card-text', 'font-weight-bold');
+    author.textContent = comment.comment;
+    const commentText = document.createElement('p');
+    commentText.classList.add('card-text');
+
+    const timestamp = document.createElement('p');
+    timestamp.classList.add('card-subtitle', 'text-muted');
+    timestamp.textContent = comment.timestamp;
+    col1.appendChild(author);
+    col2.appendChild(commentText);
+    col2.appendChild(timestamp);
+    row.appendChild(col1);
+    row.appendChild(col2);
+    cardBody.appendChild(row);
+    card.appendChild(cardBody);
+    commentsContainer.appendChild(card);
+  });
+
+
+  const form = document.getElementById('comment-form');
+
+form.addEventListener('submit', async (event) => {
+    event.preventDefault(); 
+    
+    const comment = document.getElementById('comment').value;
+    const status = document.getElementById('status').value;
+    console.log(status);
+    const taskId = 1; 
+    
+      url = `http://127.0.0.1:8000/update_comment?ticket_id=${taskId}&comment=${comment}`
+      const response = await fetch(url, { headers });
+
+    if (response.ok) {
+      window.location.href = 'index.html';
+    } else {
+      console.error('API request failed');
+    }
+});
+});
+
+</script>
+
+
+<script src="script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
+    
+  </body>
+</html>

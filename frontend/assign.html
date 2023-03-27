@@ -70,7 +70,7 @@
       <h5>Assign a Task to an Employee</h5>
     </div>
     <div class="card-body">
-      <form>
+      <form id="my-form">
 
         <div class="form-row mb-3">
 
@@ -114,7 +114,52 @@
 
 
 
+    <script>
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.querySelector('#my-form');
 
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const title = document.querySelector("#title").value;
+    const employeeName = document.querySelector("#employee-name").value;
+    const description = document.querySelector("#description").value;
+    const accessToken = localStorage.getItem('access_token');
+    const managerName = localStorage.getItem('username');
+
+    console.log(accessToken);
+    const headers = {
+      'Authorization': `Bearer ${accessToken}`
+    };
+    
+    const [empResponse, manResponse] = await Promise.all([
+      fetch(`http://127.0.0.1:8000/get_employee_id?employee_name=${employeeName}`, {headers}),
+      fetch(`http://127.0.0.1:8000/get_manager_id?manager_name=${managerName}`, {headers})
+    ]);
+
+    if (!empResponse.ok || !manResponse.ok) {
+      console.error('API request failed');
+      return;
+    }
+
+    const employeeDetails = await empResponse.json();
+    const managerDetails = await manResponse.json();
+
+
+    const url = `http://127.0.0.1:8000/create_ticket?employee_id=${employeeDetails["emp_id"]}&manager_id=${managerDetails["man_id"]}&title=${title}&description=${description}`;
+
+    const response = await fetch(url, { headers });
+
+    if (response.ok) {
+      window.location.href = 'index.html';
+    } else {
+      console.error('API request failed');
+    }
+  });
+});
+
+    </script>
+    
 
 
 <script src="script.js"></script>

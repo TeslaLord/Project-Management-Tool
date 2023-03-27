@@ -29,30 +29,30 @@ async def db_connection_middleware(request: Request, call_next):
 @app.get("/get_users")
 async def get_users(request: Request):
     cur = request.state.db.cursor()
+    cur.execute("SELECT * FROM users where user_id=10")
+    result = cur.fetchone()
+    print(result)
     cur.execute("SELECT * FROM users")
     results = cur.fetchall()
-    result_dict = {}
-    for result in results:
-        result_dict[result[0]] = result[1]
     cur.close()
-    return result_dict
+    return {"users": results}
 
 @app.get("/get_managers")
 async def get_managers(request: Request):
     cur = request.state.db.cursor()
     cur.execute("SELECT * FROM manager")
     results = cur.fetchall()
-    result_dict = {}
+    ans = []
     for result in results:
-        result_dict[result[0]] = result[1]
+        ans.append({result[0]: result[1]})
     cur.close()
-    return result_dict
+    return ans
 
 
 @app.get("/get_employees")
 async def get_employees(request: Request, manager_id):
     cur = request.state.db.cursor()
-    cur.execute(f"SELECT  emp_id, name FROM employee, users where employee.man_id={manager_id} and users.user_id=employee.user_id")
+    cur.execute(f"SELECT name, emp_id FROM employee, users where employee.man_id={manager_id} and users.user_id=employee.user_id")
     results = cur.fetchall()
     result_dict = {}
     for result in results:
@@ -65,36 +65,16 @@ async def get_manager_tickets(request: Request, manager_id):
     cur = request.state.db.cursor()
     cur.execute(f"SELECT * FROM ticket where man_id={manager_id}")
     results = cur.fetchall()
-    list_results = []
-    for result in results:
-        d = {
-            "ticket_id":result[0],
-            "employee": result[1],
-            "description": result[3],
-            "status": result[4],
-            "timestamp": result[5],
-            "title": result[6]
-        }
-        list_results.append(d)
     cur.close()
-    return list_results
+    return {"tickets": results}
 
 @app.get("/get_ticket_detail")
 async def get_ticket_detail(request: Request, ticket_id):
     cur = request.state.db.cursor()
     cur.execute(f"SELECT * FROM ticket where ticket_id={ticket_id}")
-    result = cur.fetchone()
-
-    d = {
-        "ticket_id":result[0],
-        "employee": result[1],
-        "description": result[3],
-        "status": result[4],
-        "timestamp": result[5],
-        "title": result[6]
-    }
+    results = cur.fetchall()
     cur.close()
-    return d
+    return {"tickets": results}
 
 @app.get("/get_employee_tickets")
 async def get_employee_tickets(request: Request, employee_id):
@@ -118,15 +98,8 @@ async def get_ticket_comments(request: Request, ticket_id):
     cur = request.state.db.cursor()
     cur.execute(f"SELECT * FROM ticket_comment, comment where ticket_comment.ticket_id={ticket_id} and ticket_comment.comment_id=comment.comment_id")
     results = cur.fetchall()
-    list_results = []
-    for result in results:
-        d = {
-            "comment":result[3],
-            "timestamp": result[4]
-        }
-        list_results.append(d)
     cur.close()
-    return list_results
+    return {"tickets": results}
 
 
 @app.get("/update_comment")
@@ -153,7 +126,6 @@ async def get_manager_id(request: Request, manager_name):
     cur = request.state.db.cursor()
     cur.execute(f"SELECT man_id FROM manager, users where manager.user_id=users.user_id and name='{manager_name}'")
     results = cur.fetchone()
-    print(results)
     cur.close()
     return {"man_id": results[0]}
 
