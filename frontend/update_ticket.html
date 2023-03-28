@@ -54,7 +54,7 @@
                 <a class="nav-link" href="#">Register</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">Login</a>
+                <a class="nav-link" href="login.html">Login</a>
               </li>
             </ul>
           </div>
@@ -88,7 +88,7 @@
                     <div class="row">
                         <div class="col-sm-5"></div>
                         <div class="col-sm-2">
-                            <p class="card-text">Status: <h5 class="alert alert-warning text-center">To-do</h5></p>
+                            <p class="card-text">Status: <h5 id="my-alert" class="alert text-center">To-do</h5></p>
                             <div class="col-sm-5"></div>
                         </div>
                     </div>
@@ -133,6 +133,7 @@
 document.addEventListener('DOMContentLoaded', async () => {
 
 
+
   const urlParams = new URLSearchParams(window.location.search);
   const taskId = urlParams.get('taskId');
   const accessToken = localStorage.getItem('access_token');
@@ -152,7 +153,20 @@ document.addEventListener('DOMContentLoaded', async () => {
   timestamp.textContent = data.timestamp;
   status.textContent = data.status;
   status.classList.add(`alert-${data.status.toLowerCase()}`);
-  
+
+
+  const statusText = document.getElementById('my-alert');
+  const statusValue = statusText.value
+  console.log(statusText)
+
+  if (status.textContent === 'Pending') {
+        statusText.classList.add('alert-danger');
+      } else if (status.textContent === 'Completed') {
+        statusText.classList.add('alert-success');
+      } else if (status.textContent === 'To-do') {
+        statusText.classList.add('alert-warning');
+      }
+  console.log(taskId)
   const comment_response = await fetch(`http://127.0.0.1:8000/get_ticket_comments/?ticket_id=${taskId}`, { headers });
   const comments = await comment_response.json();
   console.log(comments);
@@ -189,22 +203,66 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const form = document.getElementById('comment-form');
 
+
+const selectElement = document.getElementById('status');
+selectElement.value = data.status;
+
+
+selectElement.addEventListener('change', async (event) => {
+  
+  const selectedOption = event.target.value;
+  console.log(selectedOption)
+
+  url = `http://127.0.0.1:8000/update_ticket_status?ticket_id=${taskId}&status=${selectedOption}`
+      const response = await fetch(url, { headers });
+
+    if (response.ok) {
+      const statusSelect = document.getElementById('status');
+      const statusText = document.getElementById('my-alert');
+      console.log(statusText);
+      statusText.classList.remove('alert-warning');
+      statusText.classList.remove('alert-success');
+      statusText.classList.remove('alert-danger');
+      const status = document.querySelector('.alert');
+  
+      status.textContent = selectedOption;
+      status.classList.add(`alert-${data.status.toLowerCase()}`);
+
+
+
+      if (selectedOption === 'Pending') {
+        statusText.classList.add('alert-danger');
+      } else if (selectedOption === 'Completed') {
+        statusText.classList.add('alert-success');
+      } else if (selectedOption === 'To-do') {
+        statusText.classList.add('alert-warning');
+      }
+      console.log(document.getElementById('my-alert'))
+      // window.location.href =`update_ticket.html?taskId=${taskId}`;
+    } else {
+      console.error('API request failed');
+    }
+});
 form.addEventListener('submit', async (event) => {
     event.preventDefault(); 
     
     const comment = document.getElementById('comment').value;
+    if(comment!=''){
+
     const status = document.getElementById('status').value;
     console.log(status);
-    const taskId = 1; 
+    const taskId = urlParams.get('taskId'); 
     
       url = `http://127.0.0.1:8000/update_comment?ticket_id=${taskId}&comment=${comment}`
       const response = await fetch(url, { headers });
 
     if (response.ok) {
-      window.location.href = 'index.html';
+      alert("Comment added");
+      window.location.href =`update_ticket.html?taskId=${taskId}`;
     } else {
       console.error('API request failed');
     }
+  }
 });
 });
 

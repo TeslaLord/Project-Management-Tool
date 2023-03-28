@@ -54,7 +54,7 @@
                 <a class="nav-link" href="#">Register</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">Login</a>
+                <a class="nav-link" href="login.html">Login</a>
               </li>
             </ul>
           </div>
@@ -64,7 +64,7 @@
     <br /><br />
     <main>
 
-        <div class="container">
+        <div class="container " id="manager-contents" style="display: none;">
             <div class="row">
               <div class="col-md-8 mx-auto text-center">
                 <h1 class="display-4">Welcome to your portal!</h1>
@@ -100,13 +100,52 @@
           </div>
           
 
+
+          <div class="container " id="staff-contents" style="display: none;">
+            <div class="row">
+              <div class="col-md-8 mx-auto text-center">
+                <h1 class="display-4">Welcome to your portal!</h1>
+                <p class="lead">Browse through the portal to assign tasks to employees or see the progress of your project. </p>
+              </div>
+            </div>
+            
+            <div class="row mt-5  text-dark">
+                <div class="col-md-3"></div>
+         
+              <div class="col-md-6">
+                  <div class="card">
+                    <a href="tasks.html" class="btn btn-primary">
+                  <img class="card-img-top" src="images/progress.png" width="200" height="300" alt="Card image cap">
+                  <div class="card-body">
+                    <h5 class="card-title">View Tasks</h5>
+                   
+                  </div>
+                </a>
+                </div>
+              </div>
+              <div class="col-md-3"></div>
+            </div>
+          </div>
+
     </main>
 
 
 
 <script>
+document.addEventListener('DOMContentLoaded', () => {
+  const role = localStorage.getItem('role');
+  if (role === 'staff') {
+    const manageTicketsButton = document.getElementById('staff-contents');
+    manageTicketsButton.style.display = 'block';
+  }
+console.log(role);
+  if (role === 'manager') {
+    const manageTicketsButton = document.getElementById('manager-contents');
+    manageTicketsButton.style.display = 'block';
+  }
+});
 
-  
+
 </script>
 
 

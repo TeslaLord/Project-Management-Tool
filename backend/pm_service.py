@@ -101,8 +101,19 @@ async def get_employee_tickets(request: Request, employee_id):
     cur = request.state.db.cursor()
     cur.execute(f"SELECT * FROM ticket where emp_id={employee_id}")
     results = cur.fetchall()
+    list_results = []
+    for result in results:
+        d = {
+            "ticket_id":result[0],
+            "employee": result[1],
+            "description": result[3],
+            "status": result[4],
+            "timestamp": result[5],
+            "title": result[6]
+        }
+        list_results.append(d)
     cur.close()
-    return {"tickets": results}
+    return list_results
 
 @app.get("/update_ticket_status")
 async def update_ticket_status(request: Request, ticket_id, status):

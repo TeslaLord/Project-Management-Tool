@@ -54,7 +54,7 @@
                 <a class="nav-link" href="#">Register</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#">Login</a>
+                <a class="nav-link" href="login.html">Login</a>
               </li>
             </ul>
           </div>
@@ -124,23 +124,39 @@
         const headers = {
           'Authorization': `Bearer ${accessToken}`
         };
-        const managerName = localStorage.getItem('username');
-        const [manResponse] = await Promise.all([
-          fetch(`http://127.0.0.1:8000/get_manager_id?manager_name=${managerName}`, {headers})
-        ]);
+        const role = localStorage.getItem('role');
+        url = ''
+        if (role === 'staff') {
+          const employeeName = localStorage.getItem('username');
+          const [empResponse] = await Promise.all([
+            fetch(`http://127.0.0.1:8000/get_employee_id?employee_name=${employeeName}`, {headers})
+          ]);
+          employeeDetails = await empResponse.json();
+          const employeeId = employeeDetails["emp_id"]
+          url = `http://127.0.0.1:8000/get_employee_tickets?employee_id=${employeeId}`
+        }
+        
+        if (role === 'manager'){
+          const managerName = localStorage.getItem('username');
+          const [manResponse] = await Promise.all([
+            fetch(`http://127.0.0.1:8000/get_manager_id?manager_name=${managerName}`, {headers})
+          ]);
+          const managerDetails = await manResponse.json();
+          const managerId = managerDetails["man_id"]
 
-
-
-        const managerDetails = await manResponse.json();
-        const managerId = managerDetails["man_id"]
+          
 
         const [empResponse] = await Promise.all([
           fetch(`http://127.0.0.1:8000/get_employees?manager_id=${managerId}`, {headers}),
         ]); 
+          employeeDetails = await empResponse.json();
+          url = `http://127.0.0.1:8000/get_manager_tickets?manager_id=${managerId}`
+        }
 
-        const employeeDetails = await empResponse.json();
 
-        const response = await fetch(`http://127.0.0.1:8000/get_manager_tickets?manager_id=${managerId}`, { headers });
+
+        
+        const response = await fetch(url, { headers });
         const data = await response.json();
         const taskList = document.querySelector('#task-list');
         data.forEach(task => {
@@ -148,7 +164,6 @@
           item.setAttribute('href', '#');
           item.classList.add('list-group-item', 'list-group-item-action');
           item.setAttribute('data-task-id', task.ticket_id);
-
           const title = document.createElement('h5');
           title.classList.add('mb-1');
           title.textContent = task.title;
@@ -164,7 +179,6 @@
           item.appendChild(employee);
           item.appendChild(timestamp);
           taskList.appendChild(item);
-
           item.addEventListener('click', () => {
           const taskId = item.getAttribute('data-task-id');
           window.location.href = `update_ticket.html?taskId=${taskId}`; // move to task page with corresponding task ID
