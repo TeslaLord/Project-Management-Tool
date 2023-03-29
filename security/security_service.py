@@ -6,6 +6,7 @@ from passlib.context import CryptContext
 from datetime import datetime, timedelta
 import psycopg2
 import requests
+import os
 
 app = FastAPI()
 security = HTTPBasic()
@@ -13,12 +14,15 @@ pwd_context = CryptContext(schemes=['bcrypt'], deprecated="auto")
 oauth_2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
+DB_HOST = os.getenv("DB_HOST", "0.0.0.0")
+HOST = os.getenv("HOST", "0.0.0.0")
+PORT = int(os.getenv("PORT", "8001"))
 
 SECRET_KEY = "4FD1F5769D50F9E928AE45AB078A092E"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
-HOST = "127.0.0.1"
-PORT = "8001"
+# HOST = "0.0.0.0"
+# PORT = "8001"
 BACKEND_URL = f"http://{HOST}:{PORT}"
 
 
@@ -34,7 +38,8 @@ app.add_middleware(
 @app.middleware("http")
 async def db_connection_middleware(request: Request, call_next):
     conn = psycopg2.connect(
-        host="localhost",
+        host=DB_HOST,
+        port="5432",
         database="pmtool",
         user="postgres",
         password="invmtharun"
@@ -109,13 +114,7 @@ async def login_for_access_token(request: Request, form_data: OAuth2PasswordRequ
     access_token = create_access_token(data={"sub": user["name"]}, expires_delta=access_token_expires)
     return {"access_token": access_token, "token_type":"bearer", "role":user["role"]}
 
-##
-@app.get("/users/me/")
-async def read_users_me(current_user = Depends(get_current_active_user)):
-    if current_user["role"] == "staff":
-        raise HTTPException(status_code = status.HTTP_403_FORBIDDEN, detail="Only managers can access the page", headers = {"WWW-Authenticate": "Bearer"})
-    else:
-        return "You are a manager. You can see this"
+
 
 
 def make_get_request(url, params=None):

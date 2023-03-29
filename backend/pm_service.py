@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 import psycopg2
+import os
 
 app = FastAPI()
 
@@ -13,10 +14,13 @@ app.add_middleware(
 )
 
 
+DB_HOST = os.getenv("DB_HOST", "0.0.0.0")
+
 @app.middleware("http")
 async def db_connection_middleware(request: Request, call_next):
     conn = psycopg2.connect(
-        host="localhost",
+        host=DB_HOST,
+        port="5432",
         database="pmtool",
         user="postgres",
         password="invmtharun"
