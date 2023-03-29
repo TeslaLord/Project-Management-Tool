@@ -48,7 +48,7 @@
              
 
               <li class="nav-item">
-                <a class="nav-link" href="#">Logout</a>
+                <a class="nav-link" href="#" id="logout-button">Logout</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="#">Register</a>
@@ -119,6 +119,17 @@
 
 
     <script>
+
+const logoutButton = document.getElementById('logout-button');
+logoutButton.addEventListener('click', logout);
+
+    function logout() {
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('username');
+      localStorage.removeItem('role');
+
+      window.location.href = 'login.html';
+}
       document.addEventListener('DOMContentLoaded', async () => {
         const accessToken = localStorage.getItem('access_token');
         const headers = {
@@ -129,17 +140,17 @@
         if (role === 'staff') {
           const employeeName = localStorage.getItem('username');
           const [empResponse] = await Promise.all([
-            fetch(`http://127.0.0.1:8000/get_employee_id?employee_name=${employeeName}`, {headers})
+            fetch(`http://35.170.53.251:8000/get_employee_id?employee_name=${employeeName}`, {headers})
           ]);
           employeeDetails = await empResponse.json();
           const employeeId = employeeDetails["emp_id"]
-          url = `http://127.0.0.1:8000/get_employee_tickets?employee_id=${employeeId}`
+          url = `http://35.170.53.251:8000/get_employee_tickets?employee_id=${employeeId}`
         }
         
         if (role === 'manager'){
           const managerName = localStorage.getItem('username');
           const [manResponse] = await Promise.all([
-            fetch(`http://127.0.0.1:8000/get_manager_id?manager_name=${managerName}`, {headers})
+            fetch(`http://35.170.53.251:8000/get_manager_id?manager_name=${managerName}`, {headers})
           ]);
           const managerDetails = await manResponse.json();
           const managerId = managerDetails["man_id"]
@@ -147,10 +158,10 @@
           
 
         const [empResponse] = await Promise.all([
-          fetch(`http://127.0.0.1:8000/get_employees?manager_id=${managerId}`, {headers}),
+          fetch(`http://35.170.53.251:8000/get_employees?manager_id=${managerId}`, {headers}),
         ]); 
           employeeDetails = await empResponse.json();
-          url = `http://127.0.0.1:8000/get_manager_tickets?manager_id=${managerId}`
+          url = `http://35.170.53.251:8000/get_manager_tickets?manager_id=${managerId}`
         }
 
 

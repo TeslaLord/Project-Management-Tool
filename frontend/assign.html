@@ -48,7 +48,7 @@
              
 
               <li class="nav-item">
-                <a class="nav-link" href="#">Logout</a>
+                <a class="nav-link" href="#" id="logout-button">Logout</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="#">Register</a>
@@ -133,8 +133,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     
     const [empResponse, manResponse] = await Promise.all([
-      fetch(`http://127.0.0.1:8000/get_employee_id?employee_name=${employeeName}`, {headers}),
-      fetch(`http://127.0.0.1:8000/get_manager_id?manager_name=${managerName}`, {headers})
+      fetch(`http://35.170.53.251:8000/get_employee_id?employee_name=${employeeName}`, {headers}),
+      fetch(`http://35.170.53.251:8000/get_manager_id?manager_name=${managerName}`, {headers})
     ]);
 
     if (!empResponse.ok || !manResponse.ok) {
@@ -142,11 +142,22 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
+
+    const logoutButton = document.getElementById('logout-button');
+logoutButton.addEventListener('click', logout);
+
+    function logout() {
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('username');
+      localStorage.removeItem('role');
+
+      window.location.href = 'login.html';
+}
     const employeeDetails = await empResponse.json();
     const managerDetails = await manResponse.json();
 
 
-    const url = `http://127.0.0.1:8000/create_ticket?employee_id=${employeeDetails["emp_id"]}&manager_id=${managerDetails["man_id"]}&title=${title}&description=${description}`;
+    const url = `http://35.170.53.251:8000/create_ticket?employee_id=${employeeDetails["emp_id"]}&manager_id=${managerDetails["man_id"]}&title=${title}&description=${description}`;
 
     const response = await fetch(url, { headers });
 

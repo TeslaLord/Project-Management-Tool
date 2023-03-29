@@ -102,6 +102,9 @@
 
 
     <script>
+
+
+
    // Get the login form element
 const loginForm = document.querySelector('#login-form');
 
@@ -115,7 +118,7 @@ loginForm.addEventListener('submit', (event) => {
   const data = new FormData();
   data.append("username", username);
   data.append("password", password);
-  fetch("http://127.0.0.1:8000/token", {
+  fetch("http://35.170.53.251:8000/token", {
     method: "POST",
     body: data
   })
