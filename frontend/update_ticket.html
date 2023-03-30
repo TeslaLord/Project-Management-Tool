@@ -151,7 +151,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const headers = {
     'Authorization': `Bearer ${accessToken}`
   };
-  const response = await fetch(`http://35.170.53.251:8000/get_ticket_detail/?ticket_id=${taskId}`, { headers });
+  const response = await fetch(`http://10.110.40.117:8000/get_ticket_detail/?ticket_id=${taskId}`, { headers });
   const data = await response.json();
   const title = document.querySelector('.custom-title');
   const description = document.querySelector('.card-title');
@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         statusText.classList.add('alert-warning');
       }
   console.log(taskId)
-  const comment_response = await fetch(`http://35.170.53.251:8000/get_ticket_comments/?ticket_id=${taskId}`, { headers });
+  const comment_response = await fetch(`http://10.110.40.117:8000/get_ticket_comments/?ticket_id=${taskId}`, { headers });
   const comments = await comment_response.json();
   console.log(comments);
   comments.forEach(comment => {
@@ -224,7 +224,7 @@ selectElement.addEventListener('change', async (event) => {
   const selectedOption = event.target.value;
   console.log(selectedOption)
 
-  url = `http://35.170.53.251:8000/update_ticket_status?ticket_id=${taskId}&status=${selectedOption}`
+  url = `http://10.110.40.117:8000/update_ticket_status?ticket_id=${taskId}&status=${selectedOption}`
       const response = await fetch(url, { headers });
 
     if (response.ok) {
@@ -264,7 +264,7 @@ form.addEventListener('submit', async (event) => {
     console.log(status);
     const taskId = urlParams.get('taskId'); 
     
-      url = `http://35.170.53.251:8000/update_comment?ticket_id=${taskId}&comment=${comment}`
+      url = `http://10.110.40.117:8000/update_comment?ticket_id=${taskId}&comment=${comment}`
       const response = await fetch(url, { headers });
 
     if (response.ok) {

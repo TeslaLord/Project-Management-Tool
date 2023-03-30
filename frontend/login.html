@@ -101,6 +101,7 @@
 
 
 
+
     <script>
 
 
@@ -111,6 +112,7 @@ const loginForm = document.querySelector('#login-form');
 // Add an event listener to the form's submit button
 loginForm.addEventListener('submit', (event) => {
   event.preventDefault(); // Prevent the form from submitting normally
+  const HOST = window.HOST;
   
   // Get the input values
   const username = document.querySelector("#username").value;
@@ -118,7 +120,7 @@ loginForm.addEventListener('submit', (event) => {
   const data = new FormData();
   data.append("username", username);
   data.append("password", password);
-  fetch("http://35.170.53.251:8000/token", {
+  fetch("http://10.110.40.117:8000/token", {
     method: "POST",
     body: data
   })

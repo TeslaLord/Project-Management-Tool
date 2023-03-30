@@ -133,8 +133,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     
     const [empResponse, manResponse] = await Promise.all([
-      fetch(`http://35.170.53.251:8000/get_employee_id?employee_name=${employeeName}`, {headers}),
-      fetch(`http://35.170.53.251:8000/get_manager_id?manager_name=${managerName}`, {headers})
+      fetch(`http://10.110.40.117:8000/get_employee_id?employee_name=${employeeName}`, {headers}),
+      fetch(`http://10.110.40.117:8000/get_manager_id?manager_name=${managerName}`, {headers})
     ]);
 
     if (!empResponse.ok || !manResponse.ok) {
@@ -157,7 +157,7 @@ logoutButton.addEventListener('click', logout);
     const managerDetails = await manResponse.json();
 
 
-    const url = `http://35.170.53.251:8000/create_ticket?employee_id=${employeeDetails["emp_id"]}&manager_id=${managerDetails["man_id"]}&title=${title}&description=${description}`;
+    const url = `http://10.110.40.117:8000/create_ticket?employee_id=${employeeDetails["emp_id"]}&manager_id=${managerDetails["man_id"]}&title=${title}&description=${description}`;
 
     const response = await fetch(url, { headers });
 
