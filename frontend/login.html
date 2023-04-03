@@ -120,7 +120,7 @@ loginForm.addEventListener('submit', (event) => {
   const data = new FormData();
   data.append("username", username);
   data.append("password", password);
-  fetch("http://10.110.40.117:8000/token", {
+  fetch("http://35.203.120.251:8000/token", {
     method: "POST",
     body: data
   })

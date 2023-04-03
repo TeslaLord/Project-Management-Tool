@@ -140,17 +140,17 @@ logoutButton.addEventListener('click', logout);
         if (role === 'staff') {
           const employeeName = localStorage.getItem('username');
           const [empResponse] = await Promise.all([
-            fetch(`http://10.110.40.117:8000/get_employee_id?employee_name=${employeeName}`, {headers})
+            fetch(`http://35.203.120.251:8000/get_employee_id?employee_name=${employeeName}`, {headers})
           ]);
           employeeDetails = await empResponse.json();
           const employeeId = employeeDetails["emp_id"]
-          url = `http://10.110.40.117:8000/get_employee_tickets?employee_id=${employeeId}`
+          url = `http://35.203.120.251:8000/get_employee_tickets?employee_id=${employeeId}`
         }
         
         if (role === 'manager'){
           const managerName = localStorage.getItem('username');
           const [manResponse] = await Promise.all([
-            fetch(`http://10.110.40.117:8000/get_manager_id?manager_name=${managerName}`, {headers})
+            fetch(`http://35.203.120.251:8000/get_manager_id?manager_name=${managerName}`, {headers})
           ]);
           const managerDetails = await manResponse.json();
           const managerId = managerDetails["man_id"]
@@ -158,10 +158,10 @@ logoutButton.addEventListener('click', logout);
           
 
         const [empResponse] = await Promise.all([
-          fetch(`http://10.110.40.117:8000/get_employees?manager_id=${managerId}`, {headers}),
+          fetch(`http://35.203.120.251:8000/get_employees?manager_id=${managerId}`, {headers}),
         ]); 
           employeeDetails = await empResponse.json();
-          url = `http://10.110.40.117:8000/get_manager_tickets?manager_id=${managerId}`
+          url = `http://35.203.120.251:8000/get_manager_tickets?manager_id=${managerId}`
         }
 
 

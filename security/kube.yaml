@@ -1,40 +1,41 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: security-deployment
+  name:  security
   labels:
-    app: security
+    app:  security
 spec:
-  replicas: 2
   selector:
     matchLabels:
       app: security
+  replicas: 2
   template:
     metadata:
       labels:
-        app: security 
+        app:  security
     spec:
       containers:
-      - name: securityserver
-        image: teslalord/security:v1
+      - name:  security
+        image:  teslalord/security:v1
         env:
         - name: DB_HOST
-          value: "10.104.67.174"
+          value: "18.221.96.176"
         - name: HOST
-          value: "10.98.156.20"
+          value: "34.152.35.74"
         ports:
-        - containerPort: 8000
+        - containerPort:  8000
 ---
+
 apiVersion: v1
 kind: Service
 metadata:
-  name: security-service
+  name: security
+  namespace: default
 spec:
   selector:
-    app: security 
+    app: security
   type: LoadBalancer
   ports:
-  - protocol: TCP
+  - name: security
     port: 8000
     targetPort: 8000
-    nodePort: 31111

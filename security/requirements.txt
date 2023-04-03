@@ -5,3 +5,6 @@ python-jose[crytography]
 passlib[bcrypt]
 psycopg2-binary
 requests
+sympy
+numpy
+docopt
